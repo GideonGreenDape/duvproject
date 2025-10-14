@@ -6,42 +6,42 @@ import BackEndPage from 'components/common/layout/BackEndPage';
 import NoContent from 'components/common/utils/NoContent';
 import { getDateTime } from 'utils/date-helpers';
 import LoadItems from 'components/common/utils/LoadItems';
-import { buildKudiSMSActionUrl } from 'utils/sms';
+import { callKudiSMS , buildBackendSMSUrl } from 'utils/sms';
 import { getNairaSymbol } from 'utils/helpers';
 
 const Reports = () => {
   const [reports, setReports] = React.useState(null);
   const [balance, setBalance] = React.useState(null);
 
-  React.useEffect(() => {
-    axios
-      .post(buildKudiSMSActionUrl('reports'))
-      .then(function (response) {
-        const { status, data } = response;
-        // handle success
-        if (status === 200) {
-          setReports(data);
-        }
-      })
-      .catch(function (error) {
-        setReports([]);
-      });
-  }, []);
+ React.useEffect(() => {
+  axios
+    .get(buildBackendSMSUrl('dlr/kudisms'))
+    .then(function (response) {
+      const { status, data } = response;
+      if (status === 200) {
+        setReports(data);
+      }
+    })
+    .catch(function (error) {
+      console.error('Error fetching reports:', error);
+      setReports([]);
+    });
+}, []);
 
-  React.useEffect(() => {
-    axios
-      .post(buildKudiSMSActionUrl('balance'))
-      .then(function (response) {
-        const { status, data } = response;
-        // handle success
-        if (status === 200) {
-          setBalance(data.balance);
-        }
-      })
-      .catch(function () {
-        setBalance(0);
-      });
-  }, []);
+
+ React.useEffect(() => {
+     const fetchKudiBalance = async () => {
+       try {
+         const data = await callKudiSMS("balance");
+         setBalance(data.balance || 0);
+       } catch (error) {
+         console.error("Error fetching KudiSMS balance:", error);
+         setBalance(0);
+       }
+     };
+ 
+     fetchKudiBalance();
+   }, []);
 
   return (
     <BackEndPage title="SMS Reports">

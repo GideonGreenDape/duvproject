@@ -1,4 +1,41 @@
-export const KUDI_SMS_API = 'https://account.kudisms.net/api/';
+import axios from 'axios';
+import FormData from 'form-data';
 
-export const buildKudiSMSActionUrl = (action = 'balance') =>
-  `${KUDI_SMS_API}?username=${process.env.REACT_APP_SMS_USERNAME}&password=${process.env.REACT_APP_SMS_PASSWORD}&action=${action}`;
+
+export const KUDI_SMS_API = 'https://my.kudisms.net/api';
+
+export const API_HOST = process.env.REACT_APP_API_HOST;
+
+export const buildBackendSMSUrl = (endpoint = 'delivery-reports') =>
+  `${API_HOST}/api/v1/${endpoint}`;
+
+export const buildKudiSMSActionUrl = (action = 'balance') => {
+  return `${KUDI_SMS_API}/${action}`;
+};
+
+
+export const callKudiSMS = async (action = 'balance', payload = {}) => {
+  try {
+    const data = new FormData();
+
+    
+    data.append('token', process.env.REACT_APP_KUDI_SMS_TOKEN);
+
+    
+    Object.entries(payload).forEach(([key, value]) => {
+      data.append(key, value);
+    });
+
+    const response = await axios.post(buildKudiSMSActionUrl(action), data, {
+      headers: {
+        ...data.getHeaders(),
+      },
+      maxBodyLength: Infinity,
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error(`Error calling KudiSMS (${action}):`, error);
+    throw error;
+  }
+};

@@ -23,6 +23,7 @@ import VideoController from './VideoController';
 import AdminController from './AdminController';
 import PublicEventController from './PublicEventController';
 import CancelEventEntertainerController from './CancelEventEntertainerController';
+import KudiSmsController from './kudiController';
 
 export {
   AdminController,
@@ -50,4 +51,5 @@ export {
   ReviewController,
   UserController,
   VideoController,
+  KudiSmsController
 };

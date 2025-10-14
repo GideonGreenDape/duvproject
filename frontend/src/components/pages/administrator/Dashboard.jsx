@@ -1,24 +1,24 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import axios from 'axios';
-import TopMessage from 'components/common/layout/TopMessage';
-import BackEndPage from 'components/common/layout/BackEndPage';
-import DashboardOverviewCard from 'components/common/utils/DashboardOverviewCard';
-import { getTokenFromStore } from 'utils/localStorage';
-import { UserContext } from 'context/UserContext';
-import LoadingScreen from 'components/common/layout/LoadingScreen';
-import Events from 'components/pages/entertainer/UpcomingEvents';
+import React from "react";
+import PropTypes from "prop-types";
+import axios from "axios";
+import TopMessage from "components/common/layout/TopMessage";
+import BackEndPage from "components/common/layout/BackEndPage";
+import DashboardOverviewCard from "components/common/utils/DashboardOverviewCard";
+import { getTokenFromStore } from "utils/localStorage";
+import { UserContext } from "context/UserContext";
+import LoadingScreen from "components/common/layout/LoadingScreen";
+import Events from "components/pages/entertainer/UpcomingEvents";
 import {
   getItems,
   getNairaSymbol,
   moneyFormatInNaira,
   priceCalculatorHelper,
-} from 'utils/helpers';
-import NoContent from 'components/common/utils/NoContent';
-import LoadItems from 'components/common/utils/LoadItems';
-import Humanize from 'humanize-plus';
-import { Link } from '@reach/router';
-import { buildKudiSMSActionUrl } from 'utils/sms';
+} from "utils/helpers";
+import NoContent from "components/common/utils/NoContent";
+import LoadItems from "components/common/utils/LoadItems";
+import Humanize from "humanize-plus";
+import { Link } from "@reach/router";
+import { callKudiSMS } from "utils/sms";
 
 const Dashboard = () => {
   const { userState } = React.useContext(UserContext);
@@ -37,7 +37,7 @@ const Dashboard = () => {
     axios
       .get(`/api/v1/applications/dashboard/admin`, {
         headers: {
-          'x-access-token': getTokenFromStore(),
+          "x-access-token": getTokenFromStore(),
         },
       })
       .then(function (response) {
@@ -45,7 +45,7 @@ const Dashboard = () => {
         // handle success
         if (status === 200) {
           setResults(data.results);
-          console.log('results', data.results);
+          console.log("results", data.results);
           setLoading(false);
         }
       })
@@ -54,19 +54,20 @@ const Dashboard = () => {
         setLoading(false);
       });
   }, []);
+
+  
   React.useEffect(() => {
-    axios
-      .post(buildKudiSMSActionUrl('balance'))
-      .then(function (response) {
-        const { status, data } = response;
-        // handle success
-        if (status === 200) {
-          setBalance(data.balance);
-        }
-      })
-      .catch(function (error) {
+    const fetchKudiBalance = async () => {
+      try {
+        const data = await callKudiSMS("balance");
+        setBalance(data.balance || 0);
+      } catch (error) {
+        console.error("Error fetching KudiSMS balance:", error);
         setBalance(0);
-      });
+      }
+    };
+
+    fetchKudiBalance();
   }, []);
 
   return (
@@ -100,7 +101,7 @@ Dashboard.Items = ({
             <div className="col-sm-12">
               <div className="card card-custom text-red py-2 px-4">
                 <h6 className="text-red font-weight-normal mt-3">
-                  You have {unresolvedEvents} unresolved cases.{' '}
+                  You have {unresolvedEvents} unresolved cases.{" "}
                   <Link
                     className="btn btn-transparent btn-danger float-right"
                     to="/admin/unresolved-events"
@@ -122,19 +123,19 @@ Dashboard.Items = ({
             <DashboardOverviewCard.List
               color="yellow"
               icon="user-circle"
-              number={usersOverview && (usersOverview[1] || '0')}
+              number={usersOverview && (usersOverview[1] || "0")}
               title="Users"
             />
             <DashboardOverviewCard.List
               color="yellow"
               icon="entertainers"
-              number={usersOverview && (usersOverview[2] || '0')}
+              number={usersOverview && (usersOverview[2] || "0")}
               title="Entertainers"
             />
             <DashboardOverviewCard.List
               color="yellow"
               icon="band-members"
-              number={usersOverview && (usersOverview[3] || '0')}
+              number={usersOverview && (usersOverview[3] || "0")}
               title="Band Members"
             />
           </DashboardOverviewCard>
@@ -147,21 +148,21 @@ Dashboard.Items = ({
             <DashboardOverviewCard.List
               color="green"
               icon="auction"
-              number={eventsOverview && (eventsOverview['Auction'] || '0')}
+              number={eventsOverview && (eventsOverview["Auction"] || "0")}
               title="Auctions"
             />
             <DashboardOverviewCard.List
               color="green"
               icon="hire-entertainers"
               number={
-                eventsOverview && (eventsOverview['Recommendation'] || '0')
+                eventsOverview && (eventsOverview["Recommendation"] || "0")
               }
               title="Recommendation"
             />
             <DashboardOverviewCard.List
               color="green"
               icon="vcard"
-              number={eventsOverview && (eventsOverview['Search'] || '0')}
+              number={eventsOverview && (eventsOverview["Search"] || "0")}
               title="Search"
             />
           </DashboardOverviewCard>
@@ -175,7 +176,7 @@ Dashboard.Items = ({
               color="blue"
               icon="money"
               number={
-                paymentsOverview && (paymentsOverview['userPayments'] || '0')
+                paymentsOverview && (paymentsOverview["userPayments"] || "0")
               }
               title="User Payments"
             />
@@ -184,7 +185,7 @@ Dashboard.Items = ({
               icon="credit-card"
               number={
                 paymentsOverview &&
-                (paymentsOverview['paidEntertainers'] || '0')
+                (paymentsOverview["paidEntertainers"] || "0")
               }
               title="Paid Entertainers"
             />
@@ -192,7 +193,7 @@ Dashboard.Items = ({
               color="blue"
               icon="help"
               number={
-                paymentsOverview && (paymentsOverview['pendingPayments'] || '0')
+                paymentsOverview && (paymentsOverview["pendingPayments"] || "0")
               }
               title="Pending Payments"
               to="/admin/events"
@@ -268,10 +269,10 @@ Dashboard.PendingPayments = ({ pendingPayments }) => (
       <small className="text-muted d-block mb-3">
         {pendingPayments && pendingPayments.length > 0 && (
           <>
-            You have{' '}
+            You have{" "}
             <Link to="/admin/pending-payments">
-              {pendingPayments.length} pending{' '}
-              {Humanize.pluralize(pendingPayments.length, 'payment')}
+              {pendingPayments.length} pending{" "}
+              {Humanize.pluralize(pendingPayments.length, "payment")}
             </Link>
           </>
         )}
