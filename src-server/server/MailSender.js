@@ -27,7 +27,7 @@ function generateEmailTemplate(options) {
   return new Promise((resolve, reject) => {
     ejs.renderFile(
       path.join(__dirname, "email-template/duv-html-email-template.ejs"),
-      { ...options, logPath },
+      { ...options, logoPath },
       (err, html) => {
         if (err) return reject(err);
         const text = textEmailTemplate(options);
