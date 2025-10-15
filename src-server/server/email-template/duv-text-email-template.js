@@ -1,5 +1,5 @@
 const textEmailTemplate = ({
-  title, // compulsory
+  title,
   greeting,
   firstName,
   contentTop,
@@ -23,8 +23,6 @@ const textEmailTemplate = ({
     ? '\n\n' + contentFooter.replace('<br>', '\n')
     : '';
 
-  // Generate the text format
-  // Note: The text is formatted as it should appear on the device
   return `
 ${heading}
 ${separator}
@@ -41,4 +39,4 @@ Live Your Best Live,
 DUV LIVE Team.`;
 };
 
-export default textEmailTemplate;
+module.exports = textEmailTemplate;

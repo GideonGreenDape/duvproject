@@ -8,6 +8,7 @@ const { google } = require("googleapis");
 const { MailtrapClient } = require("mailtrap");
 const textEmailTemplate = require("./email-template/duv-text-email-template");
 
+
 const DUV_LIVE_NO_REPLY_EMAIL = { email: "donotreply@duvlive.com", name: "DUV LIVE" };
 const DUV_LIVE_INFO_EMAIL = "duvlive@gmail.com";
 // const emailLogo = `https://duvlive.com/email-logo.png`;
