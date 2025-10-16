@@ -90,12 +90,11 @@ async function sendMail(content, user, additionalOptions = {}) {
     replyTo: options.userEmail || DUV_LIVE_INFO_EMAIL,
     attachments: [
       {
-        filename: "duv-logo.svg",
         content: fs.readFileSync(logoPath).toString("base64"),
-        encoding: "base64",
-        contentType: "image/svg+xml",
-        disposition: "inline",
-        contentId: "duv_logo",
+         filename: "duv-logo.svg",
+          type: "image/svg+xml",
+          disposition: "inline",
+          content_id: "duv_logo",
       },
     ],
   };
