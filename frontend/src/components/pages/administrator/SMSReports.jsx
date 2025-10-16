@@ -10,17 +10,16 @@ import { callKudiSMS , buildBackendSMSUrl } from 'utils/sms';
 import { getNairaSymbol } from 'utils/helpers';
 
 const Reports = () => {
-  const [reports, setReports] = React.useState(null);
+  const [reports, setReports] = React.useState([]);
   const [balance, setBalance] = React.useState(null);
 
  React.useEffect(() => {
   axios
     .get(buildBackendSMSUrl('dlr/kudisms'))
     .then(function (response) {
-      const { status, data } = response;
-      if (status === 200) {
-        setReports(data);
-      }
+      const { data } = response;
+     setReports(Array.isArray(data) ? data : []);
+
     })
     .catch(function (error) {
       console.error('Error fetching reports:', error);

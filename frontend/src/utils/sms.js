@@ -19,7 +19,11 @@ export const callKudiSMS = async (action = 'balance', payload = {}) => {
     const data = new FormData();
 
     
-    data.append('token', process.env.REACT_APP_KUDI_SMS_TOKEN);
+    const token = process.env.REACT_APP_KUDI_SMS_TOKEN;
+    if (!token) {
+      throw new Error('KUDI SMS token is not configured');
+    }
+    data.append('token', token);
 
     
     Object.entries(payload).forEach(([key, value]) => {
@@ -33,9 +37,20 @@ export const callKudiSMS = async (action = 'balance', payload = {}) => {
       maxBodyLength: Infinity,
     });
 
-    return response.data;
+    const respData = response.data;
+
+    
+    if (respData && respData.status && respData.status === 'error') {
+      console.warn(`KudiSMS API Error: ${respData.msg || 'Unknown error'}`);
+     
+      return { balance: 0, error: respData.msg };
+    }
+
+    
+    return respData;
   } catch (error) {
     console.error(`Error calling KudiSMS (${action}):`, error);
-    throw error;
+    
+    return { balance: 0, error: error.message || 'Request failed' };
   }
-};
+}

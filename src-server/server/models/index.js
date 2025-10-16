@@ -363,4 +363,23 @@ db.CancelEventEntertainer.belongsTo(db.Application, {
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
+
+(async () => {
+  try {
+    const queryInterface = sequelize.getQueryInterface();
+    const tables = await queryInterface.showAllTables();
+
+    if (!tables.map(t => t.toLowerCase()).includes('deliveryreports')) {
+      console.log('Table "DeliveryReports" does not exist — creating...');
+      await sequelize.sync({ alter: true });
+      console.log(' Database synced and ready.');
+    } else {
+      console.log('Table "DeliveryReports" already exists.');
+    }
+  } catch (error) {
+    console.error(' Error during table check/sync:', error);
+  }
+})();
+
+
 module.exports = db;
