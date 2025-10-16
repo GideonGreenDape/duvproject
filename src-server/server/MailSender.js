@@ -14,7 +14,10 @@ const DUV_LIVE_INFO_EMAIL = "duvlive@gmail.com";
 // const emailLogo = `https://duvlive.com/email-logo.png`;
 const logoPath = path.resolve(__dirname, "email-template/assets/red-white.svg");
 
-const mailtrap = new MailtrapClient({ token: process.env.MAILTRAP_API_TOKEN });
+const mailtrap = new MailtrapClient({
+  token: process.env.MAILTRAP_API_TOKEN,
+  endpoint: process.env.MAILTRAP_BASE_URL || "https://send.api.mailtrap.io",
+});
 
 
 const oAuth2Client = new google.auth.OAuth2(
@@ -91,10 +94,10 @@ async function sendMail(content, user, additionalOptions = {}) {
     attachments: [
       {
         content: fs.readFileSync(logoPath).toString("base64"),
-         filename: "duv-logo.svg",
-          type: "image/svg+xml",
-          disposition: "inline",
-          content_id: "duv_logo",
+        filename: "duv-logo.svg",
+        type: "image/svg+xml",
+        disposition: "inline",
+        content_id: "duv_logo",
       },
     ],
   };
@@ -103,18 +106,21 @@ async function sendMail(content, user, additionalOptions = {}) {
   if (process.env.MAILTRAP_API_TOKEN) {
     try {
       const response = await mailtrap.send({
-        from: message.from,
+        from: {
+          email: DUV_LIVE_NO_REPLY_EMAIL.email,
+          name: DUV_LIVE_NO_REPLY_EMAIL.name,
+        },
         to: [{ email: message.to }],
         subject: message.subject,
         text: message.text,
         html: message.html,
         attachments: message.attachments,
       });
+
       console.log("Mailtrap API result:", response);
       return response;
     } catch (error) {
       console.error("Mailtrap send error, using Gmail fallback:", error);
-      // Fallback to Gmail
       return sendViaGmail(message);
     }
   } else {
