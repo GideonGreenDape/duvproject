@@ -1,6 +1,6 @@
 'use strict';
 
-import { Rating } from './';
+const { Rating } = require('./');
 
 module.exports = function (sequelize, DataTypes) {
   var EventEntertainer = sequelize.define(
