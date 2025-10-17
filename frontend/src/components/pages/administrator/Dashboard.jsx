@@ -60,6 +60,7 @@ const Dashboard = () => {
     const fetchKudiBalance = async () => {
       try {
         const data = await callKudiSMS("balance");
+        console.log(data);
         setBalance(data.balance || 0);
       } catch (error) {
         console.error("Error fetching KudiSMS balance:", error);
