@@ -1,4 +1,5 @@
-import { RATINGS } from '../constant';
+// import { RATINGS } from '../constant';
+const {RATINGS} = require('../constant')
 
 module.exports = function (sequelize, DataTypes) {
   var Rating = sequelize.define(
