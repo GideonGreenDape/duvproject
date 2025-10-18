@@ -51,9 +51,10 @@ export const sendSMS = async ({ message, phone }) => {
 
     console.log('SMS sent successfully:', response.data);
 
-    if (result && result.balance) {
-      const balance = parseFloat(result.balance.replace(/,/g, ''));
-      if (!isNaN(balance)) {
+    if (response.data.balance) {
+      const balance = response.data.balance;
+      const balanceToString = parseInt(balance);
+      if (balanceToString) {
         await models.SmsBalance.create({
           smsBalance: balance,
         });
