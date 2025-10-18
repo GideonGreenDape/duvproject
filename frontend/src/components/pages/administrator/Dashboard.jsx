@@ -18,7 +18,7 @@ import NoContent from "components/common/utils/NoContent";
 import LoadItems from "components/common/utils/LoadItems";
 import Humanize from "humanize-plus";
 import { Link } from "@reach/router";
-import { callKudiSMS } from "utils/sms";
+import { callKudiSMS,buildBackendSMSUrl } from "utils/sms";
 
 const Dashboard = () => {
   const { userState } = React.useContext(UserContext);
@@ -57,18 +57,19 @@ const Dashboard = () => {
 
   
   React.useEffect(() => {
-    const fetchKudiBalance = async () => {
-      try {
-        const data = await callKudiSMS("balance");
-        console.log(data);
-        setBalance(data.balance || 0);
-      } catch (error) {
-        console.error("Error fetching KudiSMS balance:", error);
-        setBalance(0);
-      }
-    };
+    axios
+    .get(buildBackendSMSUrl('getKudi/balance'))
+    .then(function (response) {
+      const { data } = response;
+      console.log(data);
+    
+      setBalance(data.smsBalance);
 
-    fetchKudiBalance();
+    })
+    .catch(function (error) {
+      console.error('Error fetching reports:', error);
+      setBalance(0)
+    });
   }, []);
 
   return (

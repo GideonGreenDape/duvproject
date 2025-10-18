@@ -7,7 +7,7 @@ export const KUDI_SMS_API = 'https://my.kudisms.net/api';
 
 export const API_HOST = process.env.REACT_APP_API_HOST;
 
-export const buildBackendSMSUrl = (endpoint = 'delivery-reports') =>
+export const buildBackendSMSUrl = (endpoint = '/dlr/kudisms') =>
   `${getProxy}/api/v1/${endpoint}`;
 
 export const buildKudiSMSActionUrl = (action = 'balance') => {

@@ -70,6 +70,24 @@ const KudiSmsController = {
             return res.status(500).json({ message: 'Server error' });
         }
     },
+
+    async getLatestBalance(req, res) {
+        try {
+            const latest = await db.SmsBalance.findOne({
+                order: [['timeCreated', 'DESC']],
+            });
+
+            if (!latest) {
+                return res.status(404).json({ message: 'No balance record found' });
+            }
+
+            return res.status(200).json({ smsBalance: latest.smsBalance });
+        } catch (error) {
+            console.error('Error fetching latest SMS balance:', error);
+            return res.status(500).json({ message: 'Server error' });
+        }
+    },
+
 };
 
 

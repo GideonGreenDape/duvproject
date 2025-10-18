@@ -18,6 +18,7 @@ const Reports = () => {
     .get(buildBackendSMSUrl('dlr/kudisms'))
     .then(function (response) {
       const { data } = response;
+      console.log(data);
      setReports(Array.isArray(data) ? data : []);
 
     })
@@ -29,17 +30,19 @@ const Reports = () => {
 
 
  React.useEffect(() => {
-     const fetchKudiBalance = async () => {
-       try {
-         const data = await callKudiSMS("balance");
-         setBalance(data.balance || 0);
-       } catch (error) {
-         console.error("Error fetching KudiSMS balance:", error);
-         setBalance(0);
-       }
-     };
- 
-     fetchKudiBalance();
+   axios
+    .get(buildBackendSMSUrl('getKudi/balance'))
+    .then(function (response) {
+      const { data } = response;
+      console.log(data);
+    
+      setBalance(data.smsBalance);
+
+    })
+    .catch(function (error) {
+      console.error('Error fetching reports:', error);
+      setBalance(0)
+    });
    }, []);
 
   return (

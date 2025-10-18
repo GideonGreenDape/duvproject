@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/static/css/main.96ee3927.css",
-    "main.js": "/static/js/main.4d077c98.js",
+    "main.js": "/static/js/main.9ca4224f.js",
     "static/media/menu-section.png": "/static/media/menu-section.fa260ed17535946871c1.png",
     "static/media/felebration_auth.png": "/static/media/felebration_auth.a88b4e58e08dbc14c038.png",
     "static/media/felebration.jpg": "/static/media/felebration.6c131427a14b47494b8c.jpg",
@@ -43,10 +43,10 @@
     "static/media/visa.svg": "/static/media/visa.a832f682ed43e496bcbeebb6f2aa31e1.svg",
     "static/media/phone.svg": "/static/media/phone.1dd8e4c354973306f32edcf9d5e889a4.svg",
     "main.96ee3927.css.map": "/static/css/main.96ee3927.css.map",
-    "main.4d077c98.js.map": "/static/js/main.4d077c98.js.map"
+    "main.9ca4224f.js.map": "/static/js/main.9ca4224f.js.map"
   },
   "entrypoints": [
     "static/css/main.96ee3927.css",
-    "static/js/main.4d077c98.js"
+    "static/js/main.9ca4224f.js"
   ]
 }

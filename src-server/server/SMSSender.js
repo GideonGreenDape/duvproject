@@ -1,6 +1,7 @@
-/* eslint-disable no-console */
+/* eslint-disable no-console */s
 import axios from 'axios';
 import FormData from 'form-data';
+import models from './models';
 
 
 export const KUDI_PROMOTIONAL_API = 'https://my.kudisms.net/api/sms';
@@ -27,7 +28,7 @@ export const convertToValidSMSPhoneNumber = (phone) => {
  * @param {string} params.phone - Recipient phone number
  * @param {boolean} [params.promotional=false] - If true, sends via promotional route
  */
-export const sendSMS = async ({ message, phone}) => {
+export const sendSMS = async ({ message, phone }) => {
   const phoneNumber = convertToValidSMSPhoneNumber(phone);
 
   const data = new FormData();
@@ -36,9 +37,9 @@ export const sendSMS = async ({ message, phone}) => {
   data.append('recipients', phoneNumber);
   data.append('message', message);
   data.append('gateway', '2');
-  
 
-  const apiUrl = KUDI_PROMOTIONAL_API ;
+
+  const apiUrl = KUDI_PROMOTIONAL_API;
 
   try {
     const response = await axios.post(apiUrl, data, {
@@ -49,7 +50,21 @@ export const sendSMS = async ({ message, phone}) => {
     });
 
     console.log('SMS sent successfully:', response.data);
-    return response.data;
+
+    if (result && result.balance) {
+      const balance = parseFloat(result.balance.replace(/,/g, ''));
+      if (!isNaN(balance)) {
+        await models.SmsBalance.create({
+          smsBalance: balance,
+        });
+        console.log(` SMS balance saved: ${balance}`);
+      } else {
+        console.warn(' Could not parse balance value:', result.balance);
+      }
+    } else {
+      console.warn(' Balance not found in response');
+    }
+
   } catch (error) {
     console.error('Error sending SMS:', error.response?.data || error.message);
     throw error;
