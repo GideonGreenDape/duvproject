@@ -58,7 +58,7 @@ const Dashboard = () => {
   
   React.useEffect(() => {
     axios
-    .get(buildBackendSMSUrl('getKudi/balance'))
+    .get('api/v1/getKudi/balance')
     .then(function (response) {
       const { data } = response;
       console.log(data);

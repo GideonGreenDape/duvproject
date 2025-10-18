@@ -15,7 +15,7 @@ const Reports = () => {
 
  React.useEffect(() => {
   axios
-    .get(buildBackendSMSUrl('dlr/kudisms'))
+    .get('api/v1/dlr/kudisms')
     .then(function (response) {
       const { data } = response;
       console.log(data);
@@ -31,7 +31,7 @@ const Reports = () => {
 
  React.useEffect(() => {
    axios
-    .get(buildBackendSMSUrl('getKudi/balance'))
+    .get('api/v1/getKudi/balance')
     .then(function (response) {
       const { data } = response;
       console.log(data);
