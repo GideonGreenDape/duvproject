@@ -5,10 +5,10 @@ const jwt= require('jsonwebtoken');
 // import sendMail from '../MailSender';
 const sendMail = require('../MailSender');
 // import EMAIL_CONTENT from '../email-template/content';
-// const EMAIL_CONTENT = require('../email-template/content');
-import { USER_TYPES, ACCOUNT_STATUS } from '../constant';
+const EMAIL_CONTENT = require('../email-template/content');
+// import { USER_TYPES, ACCOUNT_STATUS } from '../constant';
 
-// const {USER_TYPES,ACCOUNT_STATUS} = require('../constant');
+const {USER_TYPES,ACCOUNT_STATUS} = require('../constant');
 
 const encryptPassword = (password) =>
   bcrypt.hashSync(password, bcrypt.genSaltSync(10));
