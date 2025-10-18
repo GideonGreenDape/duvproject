@@ -64,6 +64,7 @@
     "googleapis": "^162.0.0",
     "jsonwebtoken": "^8.5.1",
     "lorem-ipsum": "^2.0.3",
+    "mailersend": "^2.6.0",
     "mailgun.js": "^12.1.0",
     "mailtrap": "^4.3.0",
     "morgan": "^1.9.1",

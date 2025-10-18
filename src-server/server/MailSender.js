@@ -3,29 +3,17 @@
 const fs = require("fs");
 const path = require("path");
 const ejs = require("ejs");
-const nodemailer = require("nodemailer");
-const { google } = require("googleapis");
-const { MailtrapClient } = require("mailtrap");
+const { MailerSend, EmailParams, Sender, Recipient, Attachment } = require("mailersend");
 const textEmailTemplate = require("./email-template/duv-text-email-template");
-
 
 const DUV_LIVE_NO_REPLY_EMAIL = { email: "donotreply@duvlive.com", name: "DUV LIVE" };
 const DUV_LIVE_INFO_EMAIL = "duvlive@gmail.com";
-// const emailLogo = `https://duvlive.com/email-logo.png`;
 const logoPath = path.resolve(__dirname, "email-template/assets/red-white.svg");
 
-const mailtrap = new MailtrapClient({
-  token: process.env.MAILTRAP_API_TOKEN,
-  endpoint: process.env.MAILTRAP_BASE_URL || "https://send.api.mailtrap.io",
+// Initialize MailerSend client
+const mailersend = new MailerSend({
+  apiKey: process.env.MAILERSEND_API_TOKEN, // <- use your MailerSend API key
 });
-
-
-const oAuth2Client = new google.auth.OAuth2(
-  process.env.GMAIL_CLIENT_ID,
-  process.env.GMAIL_CLIENT_SECRET,
-  process.env.GMAIL_REDIRECT_URI
-);
-oAuth2Client.setCredentials({ refresh_token: process.env.GMAIL_REFRESH_TOKEN });
 
 function generateEmailTemplate(options) {
   return new Promise((resolve, reject) => {
@@ -39,40 +27,6 @@ function generateEmailTemplate(options) {
       }
     );
   });
-}
-
-async function sendViaGmail(message) {
-  try {
-    const accessToken = await oAuth2Client.getAccessToken();
-
-    const transporter = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        type: "OAuth2",
-        user: process.env.GMAIL_SENDER_EMAIL,
-        clientId: process.env.GMAIL_CLIENT_ID,
-        clientSecret: process.env.GMAIL_CLIENT_SECRET,
-        refreshToken: process.env.GMAIL_REFRESH_TOKEN,
-        accessToken: accessToken.token,
-      },
-    });
-
-    const mailOptions = {
-      from: `${DUV_LIVE_NO_REPLY_EMAIL.name} <${DUV_LIVE_NO_REPLY_EMAIL.email}>`,
-      to: message.to,
-      subject: message.subject,
-      text: message.text,
-      html: message.html,
-      attachments: message.attachments,
-      replyTo: message.replyTo,
-    };
-
-    const info = await transporter.sendMail(mailOptions);
-    console.log("Gmail Fallback Sent:", info.response);
-    return info;
-  } catch (error) {
-    console.error(" Gmail Fallback Error:", error);
-  }
 }
 
 async function sendMail(content, user, additionalOptions = {}) {
@@ -102,30 +56,36 @@ async function sendMail(content, user, additionalOptions = {}) {
     ],
   };
 
+  try {
+    const sentFrom = new Sender(message.from.email, message.from.name);
+    const recipients = [new Recipient(message.to)];
+    const attachments = message.attachments.map(
+      (a) =>
+        new Attachment({
+          content: a.content,
+          filename: a.filename,
+          disposition: a.disposition,
+          id: a.content_id,
+          type: a.type,
+        })
+    );
 
-  if (process.env.MAILTRAP_API_TOKEN) {
-    try {
-      const response = await mailtrap.send({
-        from: {
-          email: DUV_LIVE_NO_REPLY_EMAIL.email,
-          name: DUV_LIVE_NO_REPLY_EMAIL.name,
-        },
-        to: [{ email: message.to }],
-        subject: message.subject,
-        text: message.text,
-        html: message.html,
-        attachments: message.attachments,
-      });
+    const emailParams = new EmailParams()
+      .setFrom(sentFrom)
+      .setTo(recipients)
+      .setSubject(message.subject)
+      .setHtml(message.html)
+      .setText(message.text)
+      .setAttachments(attachments)
+      .setReplyTo(message.replyTo);
 
-      console.log("Mailtrap API result:", response);
-      return response;
-    } catch (error) {
-      console.error("Mailtrap send error, using Gmail fallback:", error);
-      return sendViaGmail(message);
-    }
-  } else {
-    // Mailtrap not configured → go straight to Gmail
-    return sendViaGmail(message);
+    const response = await mailersend.email.send(emailParams);
+
+    console.log("MailerSend API result:", response);
+    return response;
+  } catch (error) {
+    console.error("MailerSend send error:", error);
+    throw error;
   }
 }
 
