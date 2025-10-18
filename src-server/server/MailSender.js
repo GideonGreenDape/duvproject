@@ -101,8 +101,8 @@ async function sendMail(content = {}, user = {}, additionalOptions = {}) {
     console.log("✅ [MailerSend API result]:", response);
     return response;
   } catch (error) {
-    console.error("❌ [MailerSend send error]:", error);
-    throw error;
+    console.error("⚠️ [sendMail] Failed silently:", error.message);
+    return null; 
   }
 }
 
