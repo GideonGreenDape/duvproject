@@ -112,7 +112,8 @@ const EMAIL_CONTENT = {
   },
 };
 
-export default EMAIL_CONTENT;
+module.exports = EMAIL_CONTENT;
+
 
 // Check your inbox for the email address associated with your Pinterest account.
 // Look for a message with the subject line "Please confirm your email"
