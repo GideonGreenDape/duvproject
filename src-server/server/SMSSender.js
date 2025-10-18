@@ -1,4 +1,4 @@
-/* eslint-disable no-console */s
+/* eslint-disable no-console */
 import axios from 'axios';
 import FormData from 'form-data';
 import models from './models';
